@@ -1,24 +1,19 @@
 ---
 
 - name: Export k3s kubeconfig mode
-  command: >-
-    export K3S_KUBECONFIG_MODE="644"
+  shell: 'export K3S_KUBECONFIG_MODE="644"'
   changed_when: true
 
 - name: Export k3s master ip
-  command: >-
-    export K3S_URL=https://{{ master_ip }}:6443
-    
+  shell: "export K3S_URL=https://{{ master_ip }}:6443"
   changed_when: true
 
 - name: Export k3s token
-  command: >-
-    export K3S_TOKEN={{ hostvars[groups['master'][0]]['token'] }}
+  shell: "export K3S_TOKEN={{ hostvars[groups['master'][0]]['token'] }}"
   changed_when: true
 
 - name: Run installer
-  command: >-
-    curl -sfL https://get.k3s.io | sh -
+  shell: "curl -sfL https://get.k3s.io | sh -"
   changed_when: true
 
 - name: Enable reload
