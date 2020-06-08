@@ -9,7 +9,6 @@
     - role: update
     - role: network
     - role: configuration
-    - role: raspbian
 
 
 - name: Master tasks

@@ -1,3 +1,3 @@
 default:
-		ansible-playbook --user pi --ask-pass password.yml
-		ansible-playbook kubernets_go.yml 
+		ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook --user pi --ask-pass password.yml
+		ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook kubernets_go.yml 
