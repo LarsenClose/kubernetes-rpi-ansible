@@ -1,0 +1,56 @@
+---
+
+- name: Export k3s kubeconfig mode
+  command: >-
+  export K3S_KUBECONFIG_MODE="644"
+  changed_when: true
+
+- name: Export k3s exec, no servicelb, no traefik
+  command: >-
+    export INSTALL_K3S_EXEC=" --no-deploy servicelb --no-deploy traefik"
+  changed_when: true
+
+- name: Run installer
+  command: >-
+    curl -sfL https://get.k3s.io | sh -
+  changed_when: true
+
+- name: Enable and check K3s service
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+- name: Wait for token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+
+- name: Get token
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+
+- name: Store token
+  set_fact:
+    token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: Create ansible_user /.kube
+  file:
+    path: ~{{ ansible_user }}/.kube
+    state: directory
+    owner: "{{ ansible_user }}"
+
+- name: Copy config
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~{{ ansible_user }}/.kube/config
+    remote_src: yes
+    owner: "{{ ansible_user }}"
+
+- name: Point config to master
+  command: >-
+    k3s kubectl config set-cluster default
+      --server=https://{{ master_ip }}:6443
+      --kubeconfig ~{{ ansible_user }}/.kube/config
+  changed_when: true

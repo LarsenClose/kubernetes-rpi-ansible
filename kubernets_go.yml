@@ -1,0 +1,25 @@
+---
+
+- name: Universal tasks
+  hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: authentication
+    - role: update
+    - role: network
+    - role: configure
+    - role: raspbian
+
+
+- name: Master tasks
+  hosts: master
+  become: yes
+  roles:
+    - role: cluster/master
+
+- name: Worker tasks
+  hosts: worker
+  become: yes
+  roles:
+    - role: cluster/worker

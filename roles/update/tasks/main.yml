@@ -1,0 +1,14 @@
+---
+
+- name: apt updating and upgrading
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: apt autocleaning
+  apt:
+    autoclean: yes
+
+- name: apt autoremoving
+  apt:
+    autoremove: yes

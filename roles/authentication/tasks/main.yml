@@ -1,0 +1,66 @@
+---
+  vars_prompt:
+      - name: new_password
+        prompt: "Enter a password to replace raspberry on all hosts before key based authentication"
+        confirm: yes
+
+
+- name: backup shadow file
+  copy:
+    remote_src: yes
+    src: /etc/shadow
+    dest: /tmp/shadow
+  become: yes
+
+- name: generate hash pass
+  delegate_to: localhost
+  command:  python -c "from passlib.hash import md5_crypt; import getpass; print (md5_crypt.hash('{{new_password}}'))"
+  register: hash
+
+    - debug:
+        var: hash.stdout
+
+- name: update password
+  user:
+    name: pi
+    password:  '{{hash.stdout}}'
+  become: yes
+
+- name: Add SSH Key
+  authorized_key: 
+    user: {{ ansible_user_id }}
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+
+- name: allow 'pi' to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    line: 'pi ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+            
+
+- name: Disable Password Authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: "PasswordAuthentication no"
+    state: present
+    backrefs: true
+
+- name: Disable Root Login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: "PermitRootLogin no"
+      state: present
+      backrefs: true
+    notify:
+      - restart ssh
+    
+handlers:
+  - name: restart ssh
+    service:
+      name: sshd
+      state: restarted
+

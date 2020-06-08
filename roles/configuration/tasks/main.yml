@@ -1,0 +1,38 @@
+---
+- name: Set US locale 
+  shell: "raspi-config nonint do_change_locale en_US.UTF-8"
+  register: local
+
+- name: Set timezone
+  shell: "raspi-config nonint do_change_timezone America/Denver"
+  register: timezone
+
+- name: disable swap
+  shell: dphys-swapfile uninstall && update-rc.d dphys-swapfile disable
+  args:
+    removes: /var/swap
+  register: swap_space
+
+- name: Set GPU memory split to 16 MB
+  lineinfile:
+    path: /boot/config.txt
+    line: 'gpu_mem=16'
+    create: yes
+  register: gpu_memory
+
+- name: Setting cgroup
+  lineinfile:
+    path: /boot/cmdline.txt
+    regexp: '((.)+?)(\scgroup_\w+=\w+)*$'
+    line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+    backrefs: true
+  register: cgroup_set
+
+- name: Rebooting
+  reboot:
+  when:
+    - swap_space is changed
+    - gpu_memory is changed
+    - cgroup_set is changed
+
+
