@@ -1,0 +1,7 @@
+---
+
+- name: Replacing pi default password
+  become: yes
+  user:
+    name: "pi"
+    password: "{{ new_pass }}"

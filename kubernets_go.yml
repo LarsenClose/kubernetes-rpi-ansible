@@ -8,7 +8,7 @@
     - role: authentication
     - role: update
     - role: network
-    - role: configure
+    - role: configuration
     - role: raspbian
 
 

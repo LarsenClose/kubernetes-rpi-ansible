@@ -2,7 +2,7 @@
 
 - name: Export k3s kubeconfig mode
   command: >-
-  export K3S_KUBECONFIG_MODE="644"
+    export K3S_KUBECONFIG_MODE="644"
   changed_when: true
 
 - name: Export k3s exec, no servicelb, no traefik
