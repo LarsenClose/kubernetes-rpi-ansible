@@ -16,7 +16,7 @@
   shell: "curl -sfL https://get.k3s.io | sh -"
   changed_when: true
 
-- name: Enable reload
+- name: Enable k3s service
   systemd:
     name: k3s
     daemon_reload: yes
