@@ -1,24 +1,38 @@
 ---
 
-- name: Export k3s kubeconfig mode
-  shell: 'export K3S_KUBECONFIG_MODE="644"'
-  changed_when: true
+# - name: uninstall server
+#   shell: '/usr/local/bin/k3s-uninstall.sh'
+  
 
-- name: Export k3s master ip
-  shell: "export K3S_URL=https://{{ master_ip }}:6443"
-  changed_when: true
+# - name: uninstall agent
+#   shell: '/usr/local/bin/k3s-agent-uninstall.sh'
+  
+  
+# - name: Export k3s kubeconfig mode
+#   shell: 'export K3S_KUBECONFIG_MODE="644"'
+#   changed_when: true
 
-- name: Export k3s token
-  shell: "export K3S_TOKEN={{ hostvars[groups['master'][0]]['token'] }}"
-  changed_when: true
+# - name: Export k3s install exec, no servicelb, no traefik
+#   shell: 'export INSTALL_K3S_EXEC=" --no-deploy servicelb --no-deploy traefik"'
+#   changed_when: true
 
-- name: Run installer
-  shell: "curl -sfL https://get.k3s.io | sh -"
-  changed_when: true
+# - name: Export k3s master ip
+#   shell: export K3S_URL=https://10.0.0.100:6443
+#   changed_when: true
 
-- name: Enable k3s service
-  systemd:
-    name: k3s
-    daemon_reload: yes
-    state: restarted
-    enabled: yes
+# - name: Export k3s token
+#   shell: export K3S_TOKEN=K10335c28cbf115f31674df5ba1f69f7914ec4ac45856816e6abd5f832db1a644b7::server:67fea076a37435cdd8b2b072c8356d4c
+#   changed_when: true
+
+# - name: Run installer
+#   shell: "curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.100:6443 K3S_TOKEN=K10335c28cbf115f31674df5ba1f69f7914ec4ac45856816e6abd5f832db1a644b7::server:67fea076a37435cdd8b2b072c8356d4c sh -"
+#   changed_when: true
+
+
+
+# - name: Enable k3s service
+#   systemd:
+#     name:  k3s-node
+#     daemon_reload: yes
+#     state: restarted
+#     enabled: yes

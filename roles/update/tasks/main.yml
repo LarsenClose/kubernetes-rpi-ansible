@@ -3,7 +3,7 @@
 - name: apt updating and upgrading
   apt:
     update_cache: yes
-    upgrade: yes
+    upgrade: full
 
 - name: apt autocleaning
   apt:

@@ -1,14 +1,14 @@
 ---
 
-- name: Universal tasks
-  hosts: all
-  gather_facts: yes
-  become: yes
-  roles:
-    - role: authentication
-    - role: update
-    - role: network
-    - role: configuration
+# - name: Universal tasks
+#   hosts: all
+#   gather_facts: yes
+#   become: yes
+#   roles:
+#     - role: authentication
+#     - role: update
+#     - role: network
+#     - role: configuration
 
 
 - name: Master tasks

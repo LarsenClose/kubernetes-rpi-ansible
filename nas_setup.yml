@@ -1,0 +1,14 @@
+---
+
+- name: Update upgrade everyone
+  hosts: network_storage
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: update
+
+- name: client roles
+  hosts: clients
+  become: yes
+  roles:
+    - role: cluster/clients
