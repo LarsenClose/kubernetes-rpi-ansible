@@ -1,0 +1,13 @@
+---
+
+- name: Master uninstall
+  hosts: master
+  become: yes
+  roles:
+    - role: cluster/uninstall_master
+
+- name: Worker tasks
+  hosts: worker
+  become: yes
+  roles:
+    - role: cluster/uninstall_worker

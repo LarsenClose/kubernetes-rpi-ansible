@@ -1,40 +1,39 @@
 ---
 
-- name: Add SSH Key
-  authorized_key: 
-    user: "{{ ansible_user }}"
-    state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+# - name: Add SSH Key
+#   authorized_key: 
+#     user: "{{ ansible_user }}"
+#     state: present
+#     key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
 
-- name: allow 'pi' to have passwordless sudo
-  lineinfile:
-    dest: /etc/sudoers
-    line: 'pi ALL=(ALL) NOPASSWD: ALL'
-    validate: 'visudo -cf %s'
+# - name: allow 'pi' to have passwordless sudo
+#   lineinfile:
+#     dest: /etc/sudoers
+#     line: 'pi ALL=(ALL) NOPASSWD: ALL'
+#     validate: 'visudo -cf %s'
             
 
 - name: Disable Password Authentication
   lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PasswordAuthentication'
+    dest: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication"
     line: "PasswordAuthentication no"
     state: present
-    backrefs: true
+  register: disable_pass
+
 
 - name: Disable Root Login
   lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin'
+    dest: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
     line: "PermitRootLogin no"
     state: present
-    backrefs: true
-  notify:
-    - restart ssh
+  register: disable_root
+
+- name: Rebooting
+  reboot:
+  when:
+    - disable_pass is changed
+    - disable_root is changed
     
-
-- name: restart ssh
-  service:
-    name: sshd
-    state: restarted
-

@@ -1,0 +1,5 @@
+---
+
+- name: Run installer
+  shell: "/usr/local/bin/k3s-uninstall.sh"
+  changed_when: true
