@@ -20,10 +20,13 @@
     reload: yes
   register: forward_ipv6
 
+
+
 - name: Flushing iptables
   iptables:
-    flush: true
+    flush: yes
   register: flush_iptables
+  
 
 - name: Set IPv4 legacy tables
   alternatives:
@@ -43,6 +46,7 @@
     - host_name is changed
     - forward_ipv4 is changed
     - forward_ipv6 is changed
+    - iptables_installed is changed
     - flush_iptables is changed
     - legacy_ipv4 is changed
     - legacy_ipv6 is changed

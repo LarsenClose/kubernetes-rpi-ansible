@@ -1,0 +1,11 @@
+---
+- name: Redoing nas-server
+  hosts: server
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: update
+    - role: network
+    - role: configuration
+    - role: cluster/worker
+    - role: cluster/clients

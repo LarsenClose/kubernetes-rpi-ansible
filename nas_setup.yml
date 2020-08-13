@@ -1,0 +1,7 @@
+---
+
+- name: client roles
+  hosts: clients
+  become: yes
+  roles:
+    - role: cluster/clients

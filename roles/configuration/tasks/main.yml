@@ -8,7 +8,7 @@
   register: timezone
 
 - name: disable swap
-  shell: dphys-swapfile uninstall && update-rc.d dphys-swapfile disable
+  shell: dphys-swapfile uninstall && update-rc.d dphys-swapfile disable && dphys-swapfile uninstall
   args:
     removes: /var/swap
   register: swap_space

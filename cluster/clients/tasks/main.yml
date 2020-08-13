@@ -1,0 +1,36 @@
+---
+  - name: install deps
+    apt:
+      name: nfs-common
+    register: deps
+
+  - name: Create the mount point
+    file:
+      path: /mnt/ssd
+      state: directory
+    register: dir
+
+
+  - name: Give pi recursive ownership of it
+    file:
+      path: /mnt/ssd
+      state: directory
+      recurse: yes
+      owner: pi
+      group: pi
+    register: pwned
+
+  - name: Insert a line at the end of a file.
+    lineinfile:
+      path: /etc/fstab
+      line: '10.0.0.109:/mnt/ssd   /mnt/ssd   nfs    rw  0  0'
+    register: fstab
+
+  - name: Rebooting
+    reboot:
+    when:
+      - deps is changed
+      - dir is changed
+      - pwned is changed
+      - fstab  is changed
+        

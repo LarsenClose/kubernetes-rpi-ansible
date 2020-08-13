@@ -6,7 +6,7 @@
   roles:
     - role: cluster/uninstall_master
 
-- name: Worker tasks
+- name: Worker uninstall
   hosts: worker
   become: yes
   roles:

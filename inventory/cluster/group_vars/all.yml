@@ -1,5 +1,5 @@
 ---
 ansible_user: pi
 systemd_dir: /etc/systemd/system
-master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
-
+master_ip: 10.0.0.100
+server_address: "https://{{ master_ip }}:6443"
