@@ -20,9 +20,6 @@
     reload: yes
   register: forward_ipv6
 
-# - name: install iptables
-#   shell: "apt install iptables  && apt install install xtables-addons-common"
-#   register: iptables_installed
 
 
 - name: Flushing iptables

@@ -1,62 +1,56 @@
 ---
 
-# - name: uninstall server
-#   shell: '/usr/local/bin/k3s-uninstall.sh'
-#   changed_when: true
-  
+- name: Run installer
+  shell: "curl -sfL https://get.k3s.io | sh -s -"
+  changed_when: true
 
-# # - name: uninstall agent
-# #   shell: '/usr/local/bin/k3s-agent-uninstall.sh'
-  
+- name: Reload daemon
+  systemd:
+    daemon_reload: yes
 
-# - name: Export k3s kubeconfig mode
-#   shell: 'export K3S_KUBECONFIG_MODE="644"'
-#   changed_when: true
+- name: Enable K3s service
+  service:
+    name: k3s
+    enabled: yes
+    state: started
 
-# - name: Export k3s install exec, no servicelb, no traefik
-#   shell: 'export INSTALL_K3S_EXEC=" --no-deploy servicelb --no-deploy traefik"'
-#   changed_when: true
+- name: Wait for token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+  run_once: true
 
-# - name: Run installer
-#   shell: "curl -sfL https://get.k3s.io | sh -"
-#   changed_when: true
 
-# - name: Enable K3s service
-#   systemd:
-#     name: k3s
-#     daemon_reload: yes
-#     state: restarted
-#     enabled: yes
+- name: Get token
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  run_once: true
 
-# - name: Wait for token
-#   wait_for:
-#     path: /var/lib/rancher/k3s/server/node-token
+- name: Store token
+  set_fact:
+    token: "{{ node_token['content'] | b64decode | regex_replace('\n', '')}}"
+  run_once: true
 
-# - name: Get token
-#   slurp:
-#     src: /var/lib/rancher/k3s/server/node-token
-#   register: node_token
+- name: Print cluster node token
+  debug:
+    msg: "{{ node_token }}"
 
-# - name: Store token
-#   set_fact:
-#     token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+- name: Create ansible_user /.kube
+  file:
+    path: ~{{ ansible_user }}/.kube
+    state: directory
+    owner: "{{ ansible_user }}"
 
-# - name: Create ansible_user /.kube
-#   file:
-#     path: ~{{ ansible_user }}/.kube
-#     state: directory
-#     owner: "{{ ansible_user }}"
+- name: Copy config
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~{{ ansible_user }}/.kube/config
+    remote_src: yes
+    owner: "{{ ansible_user }}"
 
-# - name: Copy config
-#   copy:
-#     src: /etc/rancher/k3s/k3s.yaml
-#     dest: ~{{ ansible_user }}/.kube/config
-#     remote_src: yes
-#     owner: "{{ ansible_user }}"
-
-# - name: Point config to master
-#   command: >-
-#     k3s kubectl config set-cluster default
-#       --server=https://{{ master_ip }}:6443
-#       --kubeconfig ~{{ ansible_user }}/.kube/config
-#   changed_when: true
+- name: Point config to master
+  command: >-
+    k3s kubectl config set-cluster default
+      --server=https://{{ master_ip }}:6443
+      --kubeconfig ~{{ ansible_user }}/.kube/config
+  changed_when: true

@@ -1,0 +1,4 @@
+---
+
+- name: uninstall worker
+  shell: '/usr/local/bin/k3s-agent-uninstall.sh'

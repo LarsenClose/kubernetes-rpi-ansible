@@ -1,0 +1,8 @@
+---
+
+- name: reboot the  cluster
+  hosts: network_storage
+  become: yes
+  roles:
+    - role: reboot
+    

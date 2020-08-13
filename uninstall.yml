@@ -1,0 +1,15 @@
+---
+
+- name: Uninstall master
+  hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: uninstall_master
+
+- name: Uninstall worker
+  hosts: worker
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: uninstall_master
