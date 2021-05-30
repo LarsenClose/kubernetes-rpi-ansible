@@ -1,4 +1,5 @@
-# k3s on raspberry pi's
+# [DEPRACATED - written for ansible 2.8] 
+## k3s on raspberry pi's
 
 
 ## This will go from a fresh install of Raspberry Pi OS to a running k3s cluster
